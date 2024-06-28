@@ -18,10 +18,10 @@ def trainGAN(
     epochs: int,
 ):
     generator_loss_fn: GeneratorLoss = GeneratorLoss()
-    generator_optimizer = torch.optim.SGD(untrained_generator.parameters(), lr=1e-3)
+    generator_optimizer = torch.optim.SGD(untrained_generator.parameters(), lr=1e-3, momentum=0.9)
     discriminator_loss_fn: DiscriminatorLoss = DiscriminatorLoss()
     discriminator_optimizer = torch.optim.SGD(
-        untrained_discriminator.parameters(), lr=1e-3
+        untrained_discriminator.parameters(), lr=1e-3, momentum=0.9
     )
     untrained_generator.to(device)
     untrained_discriminator.to(device)
