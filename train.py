@@ -4,23 +4,39 @@ from torchvision.transforms import ToPILImage
 from model import GeneratorZero, DiscriminatorZero, GeneratorLoss, DiscriminatorLoss
 from data import MNISTTrainDataLoader
 from torch import nn
+import wandb
 
 TRAINING_ITERATIONS = 10
 K = 1  # discriminator steps
 
 
 def trainGAN(
-    untrained_generator: GeneratorZero,
-    untrained_discriminator: DiscriminatorZero,
+    generator: GeneratorZero,
+    discriminator: DiscriminatorZero,
     train_dataset: DataLoader,
     epochs: int,
+    learning_rate: float,
 ):
+    # wandb setup
+    wandb.login()
+    run = wandb.init(
+        project="gan",
+        config={
+            "learning-rate": learning_rate,
+            "epochs": epochs,
+        },
+    )
+
+    wandb.watch(generator, log_freq=100, idx=0)
+    wandb.watch(discriminator, log_freq=100, idx=1)
+
     generator_loss_fn: GeneratorLoss = GeneratorLoss()
-    generator_optimizer = torch.optim.SGD(untrained_generator.parameters(), lr=1e-3)
+    generator_optimizer = torch.optim.SGD(generator.parameters(), lr=learning_rate)
     discriminator_loss_fn: DiscriminatorLoss = DiscriminatorLoss()
     discriminator_optimizer = torch.optim.SGD(
-        untrained_discriminator.parameters(), lr=1e-3
+        discriminator.parameters(), lr=learning_rate
     )
+
     for epoch in range(epochs):
         print(f"Epoch {epoch+1}\n-------------------------------")
         dataloader = train_dataset
@@ -45,18 +61,22 @@ def trainGAN(
             generator_loss.backward()
             generator_optimizer.step()
             generator_optimizer.zero_grad()
-            print(f"finished batch {batch}")
-            if batch % 64 == 0:
-                sample_image = generated[0]
-                sample_image_path = f"samples/ZERO/epoch{epoch}_batch{batch}.png"
-                save_gen(sample_image, sample_image_path)
+
+            # wandb logging
+            if batch % 10 == 0:
+                wandb.log(
+                    {
+                        "generator_loss": generator_loss.item(),
+                        "discriminator_loss": discriminator_loss.item(),
+                    }
+                )
+                if batch % 100 == 0:
+                    wandb.log({"generated_sample": wandb.Image(generated)})
         print(f"Saving epoch: {epoch} states")
-        torch.save(
-            untrained_generator.state_dict(), f"model_weights/generator_{epoch}.pth"
-        )
+        torch.save(generator.state_dict(), f"model_weights/generator_{epoch}.pth")
         print(f"Saved generator: {epoch} states")
         torch.save(
-            untrained_discriminator.state_dict(),
+            discriminator.state_dict(),
             f"model_weights/discriminator_{epoch}.pth",
         )
         print(f"Saved discriminator: {epoch} states")
@@ -73,5 +93,5 @@ def save_gen(x: torch.tensor, save_path):
 if __name__ == "__main__":
     generator = GeneratorZero()
     discriminator = DiscriminatorZero()
-    mnist_loader = MNISTTrainDataLoader(batch_size=4)
-    trainGAN(generator, discriminator, mnist_loader, epochs=5)
+    mnist_loader = MNISTTrainDataLoader(batch_size=1)
+    trainGAN(generator, discriminator, mnist_loader, epochs=200, learning_rate=1e-3)

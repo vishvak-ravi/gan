@@ -4,6 +4,7 @@ from torchvision.transforms import ToPILImage
 from model import GeneratorZero, DiscriminatorZero, GeneratorLoss, DiscriminatorLoss
 from data import MNISTTrainDataLoader
 from torch import nn
+import wandb
 
 TRAINING_ITERATIONS = 10
 K = 1  # discriminator steps
@@ -12,19 +13,19 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
 def trainGAN(
-    untrained_generator: GeneratorZero,
-    untrained_discriminator: DiscriminatorZero,
+    generator: GeneratorZero,
+    discriminator: DiscriminatorZero,
     train_dataset: DataLoader,
     epochs: int,
 ):
     generator_loss_fn: GeneratorLoss = GeneratorLoss()
-    generator_optimizer = torch.optim.SGD(untrained_generator.parameters(), lr=1e-3, momentum=0.9)
+    generator_optimizer = torch.optim.SGD(generator.parameters(), lr=1e-3, momentum=0.9)
     discriminator_loss_fn: DiscriminatorLoss = DiscriminatorLoss()
     discriminator_optimizer = torch.optim.SGD(
-        untrained_discriminator.parameters(), lr=1e-3, momentum=0.9
+        discriminator.parameters(), lr=1e-3, momentum=0.9
     )
-    untrained_generator.to(device)
-    untrained_discriminator.to(device)
+    generator.to(device)
+    discriminator.to(device)
     generator_loss_fn.to(device)
     discriminator_loss_fn.to(device)
 
@@ -36,9 +37,9 @@ def trainGAN(
 
             # optimize discriminator
             noise = torch.randn(X.shape[0], 64 * 64, device=device)  # sample noise
-            generated = untrained_generator(noise)  # generate from noise
-            d_generator = untrained_discriminator(generated)  # discriminate generated
-            d_data = untrained_discriminator(X)  # discriminate data
+            generated = generator(noise)  # generate from noise
+            d_generator = discriminator(generated)  # discriminate generated
+            d_data = discriminator(X)  # discriminate data
             discriminator_loss = discriminator_loss_fn(
                 d_generator, d_data
             )  # evaluate discriminator perf.
@@ -48,35 +49,33 @@ def trainGAN(
 
             # optimize generator
             noise = torch.randn(X.shape[0], 64 * 64, device=device)
-            generated = untrained_generator(noise)
-            d_generator = untrained_discriminator(generated)
+            generated = generator(noise)
+            d_generator = discriminator(generated)
             generator_loss = generator_loss_fn(d_generator, True)
             generator_loss.backward()
             generator_optimizer.step()
             generator_optimizer.zero_grad()
-            print(f"finished batch {batch}")
-            if batch % 64 == 0:
-                sample_image = generated[0]
-                sample_image_path = f"samples/ZERO/epoch{epoch}_batch{batch}.png"
-                save_gen(sample_image, sample_image_path)
+
+            # wandb logging
+            if batch % 10 == 0:
+                wandb.log(
+                    {
+                        "generator_loss": generator_loss.item(),
+                        "discriminator_loss": discriminator_loss.item(),
+                    }
+                )
+                if batch % 100 == 0:
+                    wandb.log({"generated_sample": wandb.Image(generated)})
+
         print(f"Saving epoch: {epoch} states")
-        torch.save(
-            untrained_generator.state_dict(), f"model_weights/generator_{epoch}.pth"
-        )
+        torch.save(generator.state_dict(), f"model_weights/generator_{epoch}.pth")
         print(f"Saved generator: {epoch} states")
         torch.save(
-            untrained_discriminator.state_dict(),
+            discriminator.state_dict(),
             f"model_weights/discriminator_{epoch}.pth",
         )
         print(f"Saved discriminator: {epoch} states")
     print("Done!")
-
-
-def save_gen(x: torch.tensor, save_path):
-    x = x.squeeze().cpu()
-    to_pil_img = ToPILImage()
-    img = to_pil_img(x)
-    img.save(save_path)
 
 
 if __name__ == "__main__":
