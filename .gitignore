@@ -3,3 +3,5 @@ samples/
 model_weights/
 data/
 remote_results*
+wandb/
+data/
