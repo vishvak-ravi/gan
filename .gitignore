@@ -5,3 +5,4 @@ data/
 remote_results*
 wandb/
 data/
+run_experiments.py

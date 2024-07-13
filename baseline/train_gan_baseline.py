@@ -3,67 +3,50 @@ from torch import nn
 from torch.utils.data import DataLoader
 from model import Generator, Discriminator
 from utils.utils import get_mnist_data_loader, LATENT_DIM
-
-import argparse
 import wandb
+
+EPOCHS = 100
+G_LEARNING_RATE = 2e-4
+D_LEARNING_RATE = G_LEARNING_RATE
+GENERATOR_STEPS_PER_DISCRIMINATOR_STEP = 1 # remnant of my desparation before i saw the GANhacks repo...
+BATCH_SIZE = 128
+DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+def sample_noise():
+    return torch.randn(BATCH_SIZE, LATENT_DIM, device=DEVICE)
 
 
 def trainGAN(
     generator,
     discriminator,
     train_dataset: DataLoader,
-    args
+    epochs: int = EPOCHS,
 ):
-    #argument parsing
-    EPOCHS = args["epochs"],
-    BATCH_SIZE = args['batch_size']
-    OPTIMIZER =  args['optimizer']
-    DISCRIMINATOR_LR = args['d_learning_rate']
-    GENERATOR_LR = args['g_learning_rate']
-    RELU_SLOPE = args['relu_slope']
-    DATA_NORM = args['data_norm']
-    DROPOUT = args['dropout']
-    GENERATOR_STEPS_PER_DISCRIMINATOR_STEP = args['generator_steps_per_discriminator_step']
-    DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    
     # wandb setup
     wandb.login()
     run = wandb.init(
         project="gan",
         config={
-            "epochs": EPOCHS,
+            "epochs": epochs,
             "batch_size": BATCH_SIZE,
-            "optimizer": OPTIMIZER,
-            "discriminator_lr": DISCRIMINATOR_LR,
-            "generator_lr": GENERATOR_LR,
-            "relu_slope": RELU_SLOPE,
-            "data_normalize":DATA_NORM,
-            "dropout": DROPOUT,
+            "optimizer": "adam",
+            "discriminator_lr": D_LEARNING_RATE,
+            "generator_lr": G_LEARNING_RATE,
+            "activations": "LeakyReLU",
+            "data_normalize": "true",
+            "dropout": 0,
         },
     )
 
     wandb.watch(generator, log_freq=100, idx=0)
     wandb.watch(discriminator, log_freq=100, idx=1)
-    
-    def sample_noise():
-        return torch.randn(BATCH_SIZE, LATENT_DIM, device=DEVICE)
-    
-    if OPTIMIZER == "Adam":
-        generator_optimizer = torch.optim.Adam(
-            generator.parameters(), lr=GENERATOR_LR, betas=(0.5, 0.999)
-        )
-        discriminator_optimizer = torch.optim.Adam(
-            discriminator.parameters(), lr=DISCRIMINATOR_LR, betas=(0.5, 0.999)
-        )
-    elif OPTIMIZER == "SGD":
-        generator_optimizer = torch.optim.SGD(
-            generator.parameters(), lr=GENERATOR_LR, momentum=0.9
-        )
-        discriminator_optimizer = torch.optim.SGD(
-            discriminator.parameters(), lr=DISCRIMINATOR_LR, momentum=0.9
-        )
-    else:
-        raise ValueError("Unknown optimizer or unsupported")
+
+    generator_optimizer = torch.optim.Adam(
+        generator.parameters(), lr=G_LEARNING_RATE, betas=(0.5, 0.999)
+    )
+    discriminator_optimizer = torch.optim.Adam(
+        discriminator.parameters(), lr=D_LEARNING_RATE, betas=(0.5, 0.999)
+    )
 
     bce = nn.BCELoss()
 
@@ -71,7 +54,7 @@ def trainGAN(
     discriminator.to(DEVICE)
     bce.to(DEVICE)
 
-    for epoch in range(EPOCHS):
+    for epoch in range(epochs):
         print(f"Epoch {epoch+1}\n-------------------------------")
         dataloader = train_dataset
         # basic_dataloader = get_basic_mnist(BATCH_SIZE)
@@ -135,26 +118,9 @@ def trainGAN(
     print(f"Saved discriminator")
     print("Finished training")
 
-def parse_args():
-    parser = argparse.ArgumentParser(description="Ablations for GAN")
-    parser.add_argument('--batch_size', type=int, help='Batch size', default=128)
-    parser.add_argument('--optimizer', type=str, help='Optimizer', default='Adam')
-    parser.add_argument('--relu_slope', type=float, help='LeakyReLU slope (0 for ReLU)', default=0.2)
-    parser.add_argument('--batch_norm', type=int, help='Batch normalization (0 or 1)', default=1)
-    parser.add_argument('--dropout', type=float, help='Dropout rate', default=0.2)
-    parser.add_argument('--data_norm', type=int, help='Data normalization (0 or 1)', default=1)
-    parser.add_argument('--epochs', type=int, help='Number of epochs', default=100)
-    parser.add_argument('--g_learning_rate', type=float, help='Learning rate for the generator', default=2e-4,)
-    parser.add_argument('--d_learning_rate', type=float, help='Learning rate for the discriminator', default=2e-4,)
-    parser.add_argument('--generator_steps_per_discriminator_step', type=int, help='Generator steps per discriminator step', default=1,)
-    
-    return parser.parse_args()
-
 
 if __name__ == "__main__":
-    args = parse_args()
-    
-    generator = Generator(args)
-    discriminator = Discriminator(args)
-    mnist_loader = get_mnist_data_loader(args)
-    trainGAN(generator, discriminator, mnist_loader, args)
+    generator = Generator(LATENT_DIM)
+    discriminator = Discriminator(batch_size=BATCH_SIZE)
+    mnist_loader = get_mnist_data_loader(batch_size=BATCH_SIZE)
+    trainGAN(generator, discriminator, mnist_loader)
