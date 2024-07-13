@@ -15,15 +15,15 @@ def trainGAN(
     args
 ):
     #argument parsing
-    EPOCHS = args["epochs"],
-    BATCH_SIZE = args['batch_size']
-    OPTIMIZER =  args['optimizer']
-    DISCRIMINATOR_LR = args['d_learning_rate']
-    GENERATOR_LR = args['g_learning_rate']
-    RELU_SLOPE = args['relu_slope']
-    DATA_NORM = args['data_norm']
-    DROPOUT = args['dropout']
-    GENERATOR_STEPS_PER_DISCRIMINATOR_STEP = args['generator_steps_per_discriminator_step']
+    EPOCHS = args.epochs
+    BATCH_SIZE = args.batch_size
+    OPTIMIZER =  args.optimizer
+    DISCRIMINATOR_LR = args.d_learning_rate
+    GENERATOR_LR = args.g_learning_rate
+    RELU_SLOPE = args.relu_slope
+    DATA_NORM = args.data_norm
+    DROPOUT = args.dropout
+    GENERATOR_STEPS_PER_DISCRIMINATOR_STEP = args.generator_steps_per_discriminator_step
     DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     
     # wandb setup

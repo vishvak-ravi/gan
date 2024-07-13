@@ -20,8 +20,8 @@ def get_basic_mnist(batch_size: int):
 
 # from https://github.com/soumith/ganhacks normalization is *highly* beneficial
 def get_mnist_data_loader(args):
-    batch_size = args['batch_size']
-    data_norm = args['data_norm']
+    batch_size = args.batch_size
+    data_norm = args.data_norm
     
     mnist_transform = Compose([ToTensor(), Normalize((0.5,), (0.5,))]) if data_norm else None
     mnist_dataset = MNIST(

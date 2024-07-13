@@ -1,0 +1,240 @@
+wandb: Currently logged in as: vishravi03 (vishravi). Use `wandb login --relogin` to force relogin
+wandb: Tracking run with wandb version 0.17.4
+wandb: Run data is saved locally in /mnt/meg/vishravi/gan/wandb/run-20240713_120039-rgg859bj
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run neat-eon-172
+wandb: ⭐️ View project at https://wandb.ai/vishravi/gan
+wandb: 🚀 View run at https://wandb.ai/vishravi/gan/runs/rgg859bj
+Epoch 1
+-------------------------------
+Epoch 2
+-------------------------------
+Epoch 3
+-------------------------------
+Epoch 4
+-------------------------------
+Epoch 5
+-------------------------------
+Epoch 6
+-------------------------------
+Epoch 7
+-------------------------------
+Epoch 8
+-------------------------------
+Epoch 9
+-------------------------------
+Epoch 10
+-------------------------------
+Epoch 11
+-------------------------------
+Epoch 12
+-------------------------------
+Epoch 13
+-------------------------------
+Epoch 14
+-------------------------------
+Epoch 15
+-------------------------------
+Epoch 16
+-------------------------------
+Epoch 17
+-------------------------------
+Epoch 18
+-------------------------------
+Epoch 19
+-------------------------------
+Epoch 20
+-------------------------------
+Epoch 21
+-------------------------------
+Epoch 22
+-------------------------------
+Epoch 23
+-------------------------------
+Epoch 24
+-------------------------------
+Epoch 25
+-------------------------------
+Epoch 26
+-------------------------------
+Epoch 27
+-------------------------------
+Epoch 28
+-------------------------------
+Epoch 29
+-------------------------------
+Epoch 30
+-------------------------------
+Epoch 31
+-------------------------------
+Epoch 32
+-------------------------------
+Epoch 33
+-------------------------------
+Epoch 34
+-------------------------------
+Epoch 35
+-------------------------------
+Epoch 36
+-------------------------------
+Epoch 37
+-------------------------------
+Epoch 38
+-------------------------------
+Epoch 39
+-------------------------------
+Epoch 40
+-------------------------------
+Epoch 41
+-------------------------------
+Epoch 42
+-------------------------------
+Epoch 43
+-------------------------------
+Epoch 44
+-------------------------------
+Epoch 45
+-------------------------------
+Epoch 46
+-------------------------------
+Epoch 47
+-------------------------------
+Epoch 48
+-------------------------------
+Epoch 49
+-------------------------------
+Epoch 50
+-------------------------------
+Epoch 51
+-------------------------------
+Epoch 52
+-------------------------------
+Epoch 53
+-------------------------------
+Epoch 54
+-------------------------------
+Epoch 55
+-------------------------------
+Epoch 56
+-------------------------------
+Epoch 57
+-------------------------------
+Epoch 58
+-------------------------------
+Epoch 59
+-------------------------------
+Epoch 60
+-------------------------------
+Epoch 61
+-------------------------------
+Epoch 62
+-------------------------------
+Epoch 63
+-------------------------------
+Epoch 64
+-------------------------------
+Epoch 65
+-------------------------------
+Epoch 66
+-------------------------------
+Epoch 67
+-------------------------------
+Epoch 68
+-------------------------------
+Epoch 69
+-------------------------------
+Epoch 70
+-------------------------------
+Epoch 71
+-------------------------------
+Epoch 72
+-------------------------------
+Epoch 73
+-------------------------------
+Epoch 74
+-------------------------------
+Epoch 75
+-------------------------------
+Epoch 76
+-------------------------------
+Epoch 77
+-------------------------------
+Epoch 78
+-------------------------------
+Epoch 79
+-------------------------------
+Epoch 80
+-------------------------------
+Epoch 81
+-------------------------------
+Epoch 82
+-------------------------------
+Epoch 83
+-------------------------------
+Epoch 84
+-------------------------------
+Epoch 85
+-------------------------------
+Epoch 86
+-------------------------------
+Epoch 87
+-------------------------------
+Epoch 88
+-------------------------------
+Epoch 89
+-------------------------------
+Epoch 90
+-------------------------------
+Epoch 91
+-------------------------------
+Epoch 92
+-------------------------------
+Epoch 93
+-------------------------------
+Epoch 94
+-------------------------------
+Epoch 95
+-------------------------------
+Epoch 96
+-------------------------------
+Epoch 97
+-------------------------------
+Epoch 98
+-------------------------------
+Epoch 99
+-------------------------------
+Epoch 100
+-------------------------------
+Traceback (most recent call last):
+  File "/mnt/meg/vishravi/gan/train_gan.py", line 160, in <module>
+    trainGAN(generator, discriminator, mnist_loader, args)
+  File "/mnt/meg/vishravi/gan/train_gan.py", line 129, in trainGAN
+    torch.save(generator.state_dict(), f"model_weights/generator_{epoch}.pth")
+  File "/playpen-storage/vishravi/miniconda3/envs/gan/lib/python3.11/site-packages/torch/serialization.py", line 627, in save
+    with _open_zipfile_writer(f) as opened_zipfile:
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/playpen-storage/vishravi/miniconda3/envs/gan/lib/python3.11/site-packages/torch/serialization.py", line 501, in _open_zipfile_writer
+    return container(name_or_buffer)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/playpen-storage/vishravi/miniconda3/envs/gan/lib/python3.11/site-packages/torch/serialization.py", line 472, in __init__
+    super().__init__(torch._C.PyTorchFileWriter(self.name))
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: Parent directory model_weights does not exist.
+wandb: - 33.835 MB of 33.835 MB uploadedwandb: \ 33.835 MB of 33.835 MB uploadedwandb: | 33.835 MB of 33.835 MB uploadedwandb: / 33.835 MB of 33.835 MB uploadedwandb: - 33.835 MB of 33.835 MB uploadedwandb: \ 33.835 MB of 33.835 MB uploadedwandb: | 33.928 MB of 33.928 MB uploaded (0.001 MB deduped)wandb: / 33.928 MB of 33.928 MB uploaded (0.001 MB deduped)wandb: 
+wandb: Run history:
+wandb:             d_data ▁▆▆▆▃▄▃▃▇▃▂▅▅▅▆▆▄▄▄▄▄▇▆▃▅▄▂▄▃▃▃▄▄▃▇▅▅▆▂█
+wandb:        d_generated ▅▄▇▇▁▃▅▄▆█▅▄▇▇▇▅█▄▆▆▅▅▅▃▆▃▅▆▇▅▅▅▄▅▇▇▇▇▄▅
+wandb: discriminator_loss ▇█▁▂▅▅█▄▅▄▆▃▆▄▅▄▆▃▃▅▅▃▃▃▃▄▇▄▄▄▅▄▅▄▄▄▅▂▄▄
+wandb:     generator_loss ▆▆▂▂█▇▄▅▃▁▅▅▁▃▃▅▁▅▃▃▆▄▅▆▄▅▄▄▃▄▅▄▅▄▂▃▂▃▆▅
+wandb: 
+wandb: Run summary:
+wandb:             d_data 0.542
+wandb:        d_generated 0.45539
+wandb: discriminator_loss 1.33789
+wandb:     generator_loss -0.653
+wandb: 
+wandb: 🚀 View run neat-eon-172 at: https://wandb.ai/vishravi/gan/runs/rgg859bj
+wandb: ⭐️ View project at: https://wandb.ai/vishravi/gan
+wandb: Synced 6 W&B file(s), 500 media file(s), 2 artifact file(s) and 0 other file(s)
+wandb: Find logs at: ./wandb/run-20240713_120039-rgg859bj/logs
+wandb: WARNING The new W&B backend becomes opt-out in version 0.18.0; try it out with `wandb.require("core")`! See https://wandb.me/wandb-core for more information.

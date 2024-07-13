@@ -11,9 +11,9 @@ class Generator(nn.Module):
     def __init__(self, args):
         super().__init__()
         
-        self.batch_size = args['batch_size']
-        self.batch_norm = args['batch_norm']
-        self.relu_slope = args['relu_slope']
+        self.batch_size = args.batch_size
+        self.batch_norm = args.batch_norm
+        self.relu_slope = args.relu_slope
         
         def layer(input_dim, output_dim, normalize=self.batch_norm, activation=nn.LeakyReLU(self.relu_slope)):
             layer = [nn.Linear(input_dim, output_dim)]
@@ -40,10 +40,10 @@ class Discriminator(nn.Module):
     def __init__(self, args):
         super().__init__()
         
-        self.batch_size = args['batch_size']
-        self.batch_norm = args['batch_norm']
-        self.relu_slope = args['relu_slope']
-        self.dropout = nn.Dropout(args['dropout'])
+        self.batch_size = args.batch_size
+        self.batch_norm = args.batch_norm
+        self.relu_slope = args.relu_slope
+        self.dropout = nn.Dropout(args.dropout)
         
         def layer(input_dim, output_dim, normalize=self.batch_norm, activation=nn.LeakyReLU(self.relu_slope)):
             layer = [nn.Linear(input_dim, output_dim)]
@@ -59,7 +59,9 @@ class Discriminator(nn.Module):
             self.dropout,
             *layer(DISCRIMINATOR_LAYER_SIZES[1], DISCRIMINATOR_LAYER_SIZES[2], normalize=False),
             self.dropout,
-            *layer(DISCRIMINATOR_LAYER_SIZES[2], 1, normalize=False, activation=nn.Sigmoid()),
+            *layer(DISCRIMINATOR_LAYER_SIZES[2], DISCRIMINATOR_LAYER_SIZES[3], normalize=False),
+            *layer(DISCRIMINATOR_LAYER_SIZES[3], DISCRIMINATOR_LAYER_SIZES[3], normalize=False),
+            *layer(DISCRIMINATOR_LAYER_SIZES[3], 1, normalize=False, activation=nn.Sigmoid()),
         )
 
     def forward(self, x):
