@@ -22,7 +22,7 @@ Anecdotally, I found dropping the Maxout for LeakyReLU to be the most beneficial
 Goodfellow recognizes that people tend to view a network "overpowering" another as a "bad" thing. Specifically, this often happens when the discriminator's loss decreases significantly while the generator cannot keep up. The intuition of the argument generally is that when the discriminator gets very good very quickly, the generator is unable to utilize the discriminator's consistent negative response. Imagine Gordon Ramsay telling a Hell's Kitchen contestant to confess they are, in fact, an idiot sandwich. Even worse, it is the *only* feedback given—although comedic, not very practical for the contestant to improve their dishes.
 
 <p align="center">
-    <img src="https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExcWhhejA3aXU1Mmp1cTA4cGxmaHRrMHo3Y3B1ajI4amlmbng1M3p3NyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3o85xnoIXebk3xYx4Q/giphy.webp" alt="idiot sandwich">
+    <img src="https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExcWhhejA3aXU1Mmp1cTA4cGxmaHRrMHo3Y3B1ajI4amlmbng1M3p3NyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3o85xnoIXebk3xYx4Q/giphy.webp" alt="idiot sandwich"/>
 </p>
 
 In turn, forums and several GAN implementations argue for training a network for more steps than the other per minibatch, or even conditionally choosing which network to train based on loss values and their trajectories. You can even see myself falling prey to this with a ```GENERATOR_STEPS_PER_DISCRIMINATOR_STEP``` hyperparameter in the training script.
