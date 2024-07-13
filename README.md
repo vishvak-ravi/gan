@@ -1,9 +1,9 @@
 # GAN
 A simple implementation based on the original paper by Goodfellow et. al.
 
-<div style="text-align: center;">
+<p align="center">
   <img src="sample.gif" alt="Description of GIF">
-</div>
+</p>
 
 
 ## Original Model
